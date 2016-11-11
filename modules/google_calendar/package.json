@@ -1,0 +1,16 @@
+{
+  "name": "google_calendar",
+  "version": "1.0.0",
+  "description": "A calendar module for magic mirror with support for Google Calendar",
+  "main": "google_calendar.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "thunderseethe",
+  "license": "ISC",
+  "dependencies": {
+    "google-auth-library": "^0.9.9",
+    "googleapis": "^14.1.0",
+    "readline": "^1.3.0"
+  }
+}
