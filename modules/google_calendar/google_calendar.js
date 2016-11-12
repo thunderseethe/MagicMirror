@@ -62,7 +62,7 @@ Module.register("google_calendar",{
 		for (var c in this.config.calendars) {
 			var calendar = this.config.calendars[c];
             if(this.isGoogleCalendar(calendar)) {
-                this.addGoogleCalendar(calendar.token, calendar.client_id, calendar.client_secret, calendar.id);
+                this.addGoogleCalendar(calendar.token, calendar.id);
             } else {
                 calendar.url = calendar.url.replace("webcal://", "http://");
 			    this.addCalendar(calendar.url, calendar.user, calendar.pass);
@@ -74,7 +74,7 @@ Module.register("google_calendar",{
 	},
 
 	isGoogleCalendar: function(calendar) {
-		return calendar.id && calendar.client_id && calendar.client_secret && calendar.token;
+		return calendar.id && calendar.token;
 	},
 
 	// Override socket notification handler.
@@ -158,8 +158,8 @@ Module.register("google_calendar",{
 				} else if (event.startDate - now < one_day && event.startDate - now > 0) {
 					timeWrapper.innerHTML = this.translate("TOMORROW");
 				} else if (event.startDate - now < 2*one_day && event.startDate - now > 0) {
-				/*Provide ability to show "the day after tomorrow" instead of "in a day" 
-				 *if "DAYAFTERTOMORROW" is configured in a language's translation .json file, 
+				/*Provide ability to show "the day after tomorrow" instead of "in a day"
+				 *if "DAYAFTERTOMORROW" is configured in a language's translation .json file,
 				 *,which can be found in MagicMirror/translations/
 				 */
 					if (this.translate('DAYAFTERTOMORROW') !== 'DAYAFTERTOMORROW') {
@@ -244,17 +244,17 @@ Module.register("google_calendar",{
 		return wrapper;
 	},
 
-	/* hasCalendarURL(url)
-	 * Check if this config contains the calendar url.
+	/* hasCalendarID(url)
+	 * Check if this config contains the calendar url or name.
 	 *
-	 * argument url sting - Url to look for.
+	 * argument url string - string to look for.
 	 *
 	 * return bool - Has calendar url
 	 */
 	hasCalendarID: function(id) {
 		for (var c in this.config.calendars) {
 			var calendar = this.config.calendars[c];
-			if (calendar.url === id || calendar.client_id === id) {
+			if (calendar.url === id || calendar.name === id) {
 				return true;
 			}
 		}
@@ -290,10 +290,12 @@ Module.register("google_calendar",{
 		return events.slice(0, this.config.maximumEntries);
 	},
 
-	/* createEventList(url)
+	/* addCalendar(url, user, pass)
 	 * Requests node helper to add calendar url.
 	 *
-	 * argument url sting - Url to add.
+	 * argument url string - Url to add.
+	 * argument user string - username.
+	 * argument pass string - password for iCal access.
 	 */
 	addCalendar: function(url, user, pass) {
 		this.sendSocketNotification("ADD_CALENDAR", {
@@ -306,17 +308,23 @@ Module.register("google_calendar",{
 		});
 	},
 
-    addGoogleCalendar: function(token, client_id, client_secret, calendar_id) {
-        this.sendSocketNotification("ADD_GOOGLE_CALENDAR", {
-            calendar_id: calendar_id,
-			client_id: client_id,
-			client_secret: client_secret,
-			oauth_token: token,
-            maximumEntries: this.config.maximumEntries,
-			maximumNumberOfDays: this.config.maximumNumberOfDays,
-			fetchInterval: this.config.fetchInterval
-        });
-    },
+	/* addGoogleCalendar(token, calendar_id)
+	 * Requests node helper to add google calendar.
+	 *
+	 * argument token string - The access token for the user account to access.
+	 * argument calendar_id string - The calendar id for the calendar to access.
+	 */
+  addGoogleCalendar: function(token, calendar_id) {
+      this.sendSocketNotification("ADD_GOOGLE_CALENDAR", {
+          calendar_id: calendar_id,
+					client_id: '870315502960-5ugu9mg1lvgr3hs2dphuki1j05lg728h.apps.googleusercontent.com',
+					client_secret: 'r4kjYncMMGHPQXWLOsHNWGss',
+					oauth_token: token,
+			    maximumEntries: this.config.maximumEntries,
+					maximumNumberOfDays: this.config.maximumNumberOfDays,
+					fetchInterval: this.config.fetchInterval
+      });
+  },
 
 	/* symbolForID(url)
 	 * Retrieves the symbol for a specific url.
@@ -328,7 +336,7 @@ Module.register("google_calendar",{
 	symbolForID: function(id) {
 		for (var c in this.config.calendars) {
 			var calendar = this.config.calendars[c];
-			if ((calendar.url === id || calendar.client_id === id) && typeof calendar.symbol === "string")  {
+			if ((calendar.url === id || calendar.name === id)  && typeof calendar.symbol === "string")  {
 				return calendar.symbol;
 			}
 		}
@@ -345,7 +353,7 @@ Module.register("google_calendar",{
 	countTitleForID: function(id) {
 		for (var c in this.config.calendars) {
 			var calendar = this.config.calendars[c];
-			if ((calendar.url === id || calendar.client_id === id) && typeof calendar.repeatingCountTitle === "string")  {
+			if ((calendar.url === id || calendar.name === id) && typeof calendar.repeatingCountTitle === "string")  {
 				return calendar.repeatingCountTitle;
 			}
 		}
