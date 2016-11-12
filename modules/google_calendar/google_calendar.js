@@ -62,7 +62,7 @@ Module.register("google_calendar",{
 		for (var c in this.config.calendars) {
 			var calendar = this.config.calendars[c];
             if(this.isGoogleCalendar(calendar)) {
-                this.addGoogleCalendar(calendar.token, calendar.id);
+                this.addGoogleCalendar(calendar.token, calendar.id, calendar.name);
             } else {
                 calendar.url = calendar.url.replace("webcal://", "http://");
 			    this.addCalendar(calendar.url, calendar.user, calendar.pass);
@@ -74,7 +74,7 @@ Module.register("google_calendar",{
 	},
 
 	isGoogleCalendar: function(calendar) {
-		return calendar.id && calendar.token;
+		return calendar.id && calendar.name;
 	},
 
 	// Override socket notification handler.
@@ -314,12 +314,13 @@ Module.register("google_calendar",{
 	 * argument token string - The access token for the user account to access.
 	 * argument calendar_id string - The calendar id for the calendar to access.
 	 */
-  addGoogleCalendar: function(token, calendar_id) {
+  addGoogleCalendar: function(token, calendar_id, calendar_name) {
       this.sendSocketNotification("ADD_GOOGLE_CALENDAR", {
           calendar_id: calendar_id,
 					client_id: '870315502960-5ugu9mg1lvgr3hs2dphuki1j05lg728h.apps.googleusercontent.com',
 					client_secret: 'r4kjYncMMGHPQXWLOsHNWGss',
 					oauth_token: token,
+					calendar_name: calendar_name,
 			    maximumEntries: this.config.maximumEntries,
 					maximumNumberOfDays: this.config.maximumNumberOfDays,
 					fetchInterval: this.config.fetchInterval

@@ -29,7 +29,7 @@ module.exports = NodeHelper.create({
 			//console.log('ADD_CALENDAR: ');
 			this.createFetcher(payload.url, payload.fetchInterval, payload.maximumEntries, payload.maximumNumberOfDays, payload.user, payload.pass);
 		} else if (notification === "ADD_GOOGLE_CALENDAR") {
-        this.createGoogleFetcher(payload.oauth_token, payload.calendar_id, payload.client_id, payload.client_secret, payload.fetchInterval, payload.maximumEntries, payload.maximumNumberOfDays);
+        this.createGoogleFetcher(payload.oauth_token, payload.calendar_id, payload.client_id, payload.client_secret, payload.calendar_name, payload.fetchInterval, payload.maximumEntries, payload.maximumNumberOfDays);
     }
 	},
 
@@ -78,7 +78,7 @@ module.exports = NodeHelper.create({
 		fetcher.startFetch();
 	},
 
-  createGoogleFetcher: function(oauth_token, calendar_id, client_id, calendar_name, client_secret, fetchInterval, maximumEntries, maximumNumberOfDays) {
+  createGoogleFetcher: function(oauth_token, calendar_id, client_id, client_secret, calendar_name, fetchInterval, maximumEntries, maximumNumberOfDays) {
     var self = this;
 
 		var fetcher; //Sure do love not having if as an expression
