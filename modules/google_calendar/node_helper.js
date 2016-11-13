@@ -85,7 +85,7 @@ module.exports = NodeHelper.create({
 		if(typeof self.fetchers[calendar_name] !== "undefined") {
 			fetcher = self.fetchers[calendar_name];
 		} else {
-			fetcher = new GoogleCalendarFetcher(client_id, client_secret, calendar_id, oauth_token, fetchInterval, maximumEntries, maximumNumberOfDays);
+			fetcher = new GoogleCalendarFetcher(client_id, client_secret, calendar_name, calendar_id, oauth_token, fetchInterval, maximumEntries, maximumNumberOfDays);
 
 			fetcher.onReceive(function(events) {
 				self.sendSocketNotification("CALENDAR_EVENTS", {

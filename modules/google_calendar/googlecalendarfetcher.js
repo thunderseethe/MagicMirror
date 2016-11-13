@@ -3,11 +3,11 @@ var googleAuth = require("google-auth-library");
 var moment = require("moment");
 var fs = require("fs");
 
-var GoogleCalendarFetcher = function(client_id, client_secret, calendar_id, oauth_token, reloadInterval, maximumEntries, maximumNumberOfDays){
+var GoogleCalendarFetcher = function(client_id, client_secret, calendar_name, calendar_id, oauth_token, reloadInterval, maximumEntries, maximumNumberOfDays){
     var self = this;
 
     var reloadTimer = null;
-    const TOKEN_FILENAME = client_id + '.json';
+    const TOKEN_FILENAME = calendar_name + '.json';
     //var events = [];
     token = oauth_token; //this is done so that token can be updated if it expires
     if(fs.existsSync(TOKEN_FILENAME)){
