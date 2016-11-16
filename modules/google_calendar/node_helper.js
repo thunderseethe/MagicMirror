@@ -29,7 +29,7 @@ module.exports = NodeHelper.create({
 			//console.log('ADD_CALENDAR: ');
 			this.createFetcher(payload.url, payload.fetchInterval, payload.maximumEntries, payload.maximumNumberOfDays, payload.user, payload.pass);
 		} else if (notification === "ADD_GOOGLE_CALENDAR") {
-        this.createGoogleFetcher(payload.oauth_token, payload.calendar_id, payload.client_id, payload.client_secret, payload.calendar_name, payload.fetchInterval, payload.maximumEntries, payload.maximumNumberOfDays);
+        this.createGoogleFetcher(payload.calendar_id, payload.client_id, payload.client_secret, payload.calendar_name, payload.fetchInterval, payload.maximumEntries, payload.maximumNumberOfDays);
     }
 	},
 
@@ -78,42 +78,38 @@ module.exports = NodeHelper.create({
 		fetcher.startFetch();
 	},
 
-  createGoogleFetcher: function(oauth_token, calendar_id, client_id, client_secret, calendar_name, fetchInterval, maximumEntries, maximumNumberOfDays) {
-    var self = this;
+	createGoogleFetcher: function(calendar_id, client_id, client_secret, calendar_name, fetchInterval, maximumEntries, maximumNumberOfDays) {
+    	var self = this;
 
-		var fetcher; //Sure do love not having if as an expression
-		if(typeof self.fetchers[calendar_name] !== "undefined") {
-			fetcher = self.fetchers[calendar_name];
-		} else {
-			fetcher = new GoogleCalendarFetcher(client_id, client_secret, calendar_name, calendar_id, oauth_token, fetchInterval, maximumEntries, maximumNumberOfDays);
-
-			fetcher.onReceive(function(events) {
+		var fetcher;
+		if(typeof self.fetchers[calendar_name] === "undefined") {
+			var onReceive = function(events) {
+				clearTimeout(self.fetchers[calendar_name]);
+				self.fetchers[calendar_name] = null;
+				
 				self.sendSocketNotification("CALENDAR_EVENTS", {
 					id: calendar_name,
 					events: events
 				});
-			});
-
-			fetcher.onError(function(error){
+				recurse(client_id, client_secret, calendar_name, calendar_id, maximumEntries, maximumNumberOfDays);
+			}
+			var onError = function(error) {
 				self.sendSocketNotification("FETCH_ERROR", {
-					id: calendar_name,
-					error: error,
+					id:calendar_name,
+					error: error
 				});
-			});
-
-			self.fetchers[calendar_name] = fetcher;
+			}
+			var recurse = function(client_id, client_secret, calendar_name, calendar_id, maximumEntries, maximumNumberOfDays) {
+				self.fetchers[calendar_name] = setTimeout(function() {
+					GoogleCalendarFetcher(client_id, client_secret, calendar_name, calendar_id, maximumEntries, maximumNumberOfDays)
+						.then(onReceive)
+						.catch(onError)
+				}, fetchInterval);
+			}
+			GoogleCalendarFetcher(client_id, client_secret, calendar_name, calendar_id, maximumEntries, maximumNumberOfDays)
+				.then(onReceive)
+				.catch(onError);
 		}
+	},
 
-		fetcher.startFetch();
-  },
-
-    // getNewToken: function(oauth2Client, callback) {
-	// 	var SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
-    //     var authUrl = oauth2Client.generateAuthUrl({
-    //         access_type: 'offline',
-    //         scope: SCOPES
-    //     });
-	// 	console.log('Authorize this app by visiting this url: ' + authUrl);
-
-    // }
 });

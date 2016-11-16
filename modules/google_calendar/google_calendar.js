@@ -62,7 +62,7 @@ Module.register("google_calendar",{
 		for (var c in this.config.calendars) {
 			var calendar = this.config.calendars[c];
             if(this.isGoogleCalendar(calendar)) {
-                this.addGoogleCalendar(calendar.token, calendar.id, calendar.name);
+                this.addGoogleCalendar(calendar.google_id, calendar.name);
             } else {
                 calendar.url = calendar.url.replace("webcal://", "http://");
 			    this.addCalendar(calendar.url, calendar.user, calendar.pass);
@@ -74,7 +74,7 @@ Module.register("google_calendar",{
 	},
 
 	isGoogleCalendar: function(calendar) {
-		return calendar.id && calendar.name;
+		return calendar.google_id && calendar.name;
 	},
 
 	// Override socket notification handler.
@@ -99,7 +99,6 @@ Module.register("google_calendar",{
 	// Override dom generator.
 	getDom: function() {
 		var events = this.createEventList();
-		console.log(events);
 		var wrapper = document.createElement("table");
 		wrapper.className = "small";
 
@@ -271,9 +270,7 @@ Module.register("google_calendar",{
 		var events = [];
 		var today = moment().startOf("day");
 		for (var c in this.calendarData) {
-			console.log(c);
 			var calendar = this.calendarData[c];
-			console.log(calendar);
 			for (var e in calendar) {
 				var event = calendar[e];
 				event.url = c;
@@ -282,7 +279,7 @@ Module.register("google_calendar",{
 			}
 		}
 
-		console.log(events);
+
 		events.sort(function(a, b) {
 			return a.startDate - b.startDate;
 		});
@@ -311,21 +308,21 @@ Module.register("google_calendar",{
 	/* addGoogleCalendar(token, calendar_id)
 	 * Requests node helper to add google calendar.
 	 *
-	 * argument token string - The access token for the user account to access.
 	 * argument calendar_id string - The calendar id for the calendar to access.
+	 * argument calendar_name string - The unique identifier of the calendar for use in caching
 	 */
-  addGoogleCalendar: function(token, calendar_id, calendar_name) {
-      this.sendSocketNotification("ADD_GOOGLE_CALENDAR", {
-          calendar_id: calendar_id,
-					client_id: '870315502960-5ugu9mg1lvgr3hs2dphuki1j05lg728h.apps.googleusercontent.com',
-					client_secret: 'r4kjYncMMGHPQXWLOsHNWGss',
-					oauth_token: token,
-					calendar_name: calendar_name,
-			    maximumEntries: this.config.maximumEntries,
-					maximumNumberOfDays: this.config.maximumNumberOfDays,
-					fetchInterval: this.config.fetchInterval
-      });
-  },
+	addGoogleCalendar: function(calendar_id, calendar_name) {
+		this.sendSocketNotification("ADD_GOOGLE_CALENDAR", {
+			calendar_id: calendar_id,
+			client_id: '870315502960-q5e0gl2pks3i7u56bd6a0dsoqhb0i6ca.apps.googleusercontent.com',
+			client_secret: 'u25IPa2TtLTIdJoUdhs02CfD',
+			//oauth_token: token,
+			calendar_name: calendar_name,
+			maximumEntries: this.config.maximumEntries,
+			maximumNumberOfDays: this.config.maximumNumberOfDays,
+			fetchInterval: this.config.fetchInterval
+		});
+	},
 
 	/* symbolForID(url)
 	 * Retrieves the symbol for a specific url.
