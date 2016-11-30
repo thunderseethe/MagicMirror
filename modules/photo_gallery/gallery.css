@@ -1,0 +1,4 @@
+/*Turn off padding around this module if it's fullscreen */
+.fullscreen .photo_gallery.module {
+	padding: 0px;
+}

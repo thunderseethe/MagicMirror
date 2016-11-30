@@ -1,0 +1,10 @@
+/* 
+	This is dynamically loaded if we are using photo_gallery in fullscreen mode
+	It makes modules more visible by giving them a dark background
+*/
+.module {
+	background-color: rgba(0, 0, 0, 0.75);
+	padding: 20px;
+	box-shadow: 2px 2px 6px 1px rgba(0, 0, 0, 0.7);
+	border-radius: 10px;
+}

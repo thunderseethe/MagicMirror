@@ -1,0 +1,14 @@
+{
+  "name": "photo_gallery",
+  "version": "1.0.0",
+  "description": "A photo gallery module for MagicMirror that displays a directory of images in a carousel",
+  "main": "photo_gallery.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.4.6"
+  }
+}
